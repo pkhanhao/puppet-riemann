@@ -175,3 +175,55 @@ riemann::stream:
 )
 )
 ```
+
+3、使用Foreman的Smart class parameters管理Puppet。示例如下。
+
+```
+classes:
+  riemann:
+  riemann::logging:
+  riemann::profile::config:
+    config_listen:
+      tcp:
+        type: tcp
+        options:
+          host: '"0.0.0.0"'
+          port: '5557'
+      udp:
+        type: udp
+        options:
+          host: '"0.0.0.0"'
+          port: '5557'
+      ws:
+        type: ws
+        options:
+          host: '"0.0.0.0"'
+          port: '5556'
+    config_fragment:
+      00-require_db:
+        content: "(require 'customOpentsdb)"
+      10-def_db:
+        content: (def db (customOpentsdb/opentsdb {:host "127.0.0.1" :port 4242}))
+      20-expire_events:
+        content: "(periodically-expire 5)"
+      21-instrumentation:
+        content: "(instrumentation {:enabled? false})"
+    config_streams:
+      default:
+        streams: default
+      test:
+        streams: test
+    config_let:
+      00-index:
+        content:
+          index: "(default :ttl 6000000 (index))"
+    config_stream:
+      00-to-index:
+        content: index
+      01-log-info:
+        content: '#(info "opentsdb event" %)'
+      02-to-db:
+        content: db
+      03-log-expired-events:
+        content: (expired (fn [event] (info "expired" event)))
+```
