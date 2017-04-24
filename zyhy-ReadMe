@@ -1,0 +1,177 @@
+【模块信息】
+
+ccin2p3-riemann (v0.5.1)
+
+注：代码微调diff见 https://github.com/pkhanhao/puppet-riemann/commit/37b63de308ee273a318ce5a5ccc9f4738b54e21e
+
+【使用方法】
+
+1、安装默认riemann，无配置。
+
+```
+classes:
+  - riemann
+```
+
+或安装仅配置默认日志（/var/log/riemann/riemann.log）的riemann：
+
+```
+classes:
+  - riemann::logging
+```
+
+2、设置riemann配置文件（/etc/riemann/riemann.config）。
+
+（1）监听。示例如下。
+
+```
+riemann::listen:
+  tcp:
+    type: 'tcp'
+    options:
+      host: '"0.0.0.0"'
+      port: '5557'
+  udp:
+    options:
+      host: '"0.0.0.0"'
+      port: '5557'
+  ws:
+    type: 'ws'
+    options:
+    options:
+      host: '"0.0.0.0"'
+      port: '5556'
+```
+
+（2）填充配置块，如require ns、def/defn等内容（因为是填充方式，如果想要，也可写let、streams等所有代码块）。示例如下。
+
+```
+riemann::config::fragment:
+  00-require_db:
+    content: "(require 'customOpentsdb)"
+  10-def_db:
+    content: '(def db (customOpentsdb/opentsdb {:host "127.0.0.1" :port 4242}))'
+  20-expire_events:
+    content: '(periodically-expire 5)'
+  21-instrumentation:
+    content: '(instrumentation {:enabled? false})'
+```
+
+（3）单个streams配置，主要包含streams、let和stream部分。因为只使用1个streams（即default），则不用申明streams部分。示例如下。
+
+```
+riemann::let:
+  00-index:
+    content:
+      index: '(default :ttl 6000000 (index))'
+riemann::stream:
+  00-to-index:
+    content: 'index'
+  01-log-info:
+    content: '#(info "opentsdb event" %)'
+  02-to-db:
+    content: 'db'
+  03-log-expired-events:
+    content: '(expired (fn [event] (info "expired" event)))'
+```
+
+如上最终生成配置如下：
+
+```
+(include "custom")
+
+(logging/init {:file "/var/log/riemann/riemann.log"})
+(tcp-server {:host "0.0.0.0" :port 5557})
+(udp-server {:host "0.0.0.0" :port 5557})
+(ws-server {:host "0.0.0.0" :port 5556})
+(require 'customOpentsdb)
+(def db (customOpentsdb/opentsdb {:host "127.0.0.1" :port 4242}))
+(periodically-expire 5)
+(instrumentation {:enabled? false})
+(let [
+
+      index (default :ttl 6000000 (index))
+]
+(streams
+  index
+
+  #(info "opentsdb event" %)
+
+  db
+
+  (expired (fn [event] (info "expired" event)))
+
+)
+)
+
+```
+
+（4）多个streams配置，主要包含streams、let和stream部分。当有多个streams时，必须声明streams部分，且 **$streams 和 $title 必须相同**。并且，let 和 stream 部分需要申明所使用的对应 streams 名称。
+
+```
+riemann::streams:
+  default:
+    streams: 'default'
+    #let: 'host "127.0.0.1"'
+  test:
+    streams: 'test'
+riemann::let:
+  default-streams-index:
+    streams: 'default'
+    content:
+      index: '(default :ttl 300 (index))'
+  test-streams-index:
+    streams: 'test'
+    content:
+      index: '(default :ttl 6000000 (index))'
+riemann::stream:
+  default-streams-to-index:
+    streams: 'default'
+    content: 'index'
+  default-streams-expired-events:
+    streams: 'default'
+    content: '(expired (fn [event] (info "expired" event)))'
+  test-streams-log-info:
+    streams: 'test'
+    content: '#(info "opentsdb event" %)'
+  test-to-db:
+    streams: 'test'
+    content: 'db'
+```
+
+如上生成的配置为：
+
+```
+(include "custom")
+
+(logging/init {:file "/var/log/riemann/riemann.log"})
+(tcp-server {:host "0.0.0.0" :port 5557})
+(udp-server {:host "0.0.0.0" :port 5557})
+(ws-server {:host "0.0.0.0" :port 5556})
+(require 'customOpentsdb)
+(def db (customOpentsdb/opentsdb {:host "127.0.0.1" :port 4242}))
+(periodically-expire 5)
+(instrumentation {:enabled? false})
+(let [
+
+      index (default :ttl 300 (index))
+]
+(streams
+  (expired (fn [event] (info "expired" event)))
+
+  index
+
+)
+)
+(let [
+
+      index (default :ttl 6000000 (index))
+]
+(streams
+  #(info "opentsdb event" %)
+
+  db
+
+)
+)
+```
