@@ -46,6 +46,10 @@ define riemann::streams (
   Riemann::Config::Fragment <| section == "streams ${streams}" and subscriber == 'local' |> {
     order   => "${order}-25"
   }
+  # collect cmccstream functions from riemann::stream
+  Riemann::Config::Fragment <| section == "cmccstreams ${streams}" and subscriber == 'local' |> {
+    order   => "${order}-26"
+  }
   riemann::config::fragment { "streams ${streams} footer":
     content => ')',
     order   => "${order}-28"

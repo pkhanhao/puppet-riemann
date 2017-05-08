@@ -17,6 +17,7 @@ class riemann::profile::config (
   $config_streams = {},
   $config_let = {},
   $config_stream = {},
+  $config_cmccstream = {},
 ) {
 
   if ($config_listen) {
@@ -33,6 +34,9 @@ class riemann::profile::config (
   }
   if ($config_stream) {
     create_resources('::riemann::stream', $config_stream)
+  }
+  if ($config_cmccstream) {
+    create_resources('::riemann::cmccstream', $config_cmccstream)
   }
 }
 # vim: ft=puppet

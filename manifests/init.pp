@@ -13,6 +13,13 @@
 #
 class riemann (
   $use_hiera = true,
+  $mail_from = $riemann::params::mail_from,
+  $mail_to = $riemann::params::mail_to,
+  $host_regex = $riemann::params::host_regex,
+  $time_length = $riemann::params::time_length,
+  $time_granularity = $riemann::params::time_granularity,
+  $alarm_relation = $riemann::params::alarm_relation,
+  $alarm_conditions = $riemann::params::alarm_conditions,
   $package_name = $riemann::params::package_name,
   $service_name = $riemann::params::service_name,
   $config_dir = $riemann::params::config_dir,

@@ -28,7 +28,7 @@ class riemann::params {
           $reload_command = "/sbin/service ${service_name} reload"
         }
         '7': {
-          $reload_command = "kill -HUP $(</var/run/riemann.pid)"
+          $reload_command = "/bin/kill -HUP $(</var/run/riemann.pid)"
         }
         default: {
           fail("operatingsystemmajrelease `${::operatingsystemmajrelease}` not supported")
@@ -42,6 +42,13 @@ class riemann::params {
   $config_include_dir = 'custom'
   $init_config_hash = {}
   $log_file = '/var/log/riemann/riemann.log'
+  $mail_from = '"riemann@loaclhost"'
+  $mail_to = '"hanhao@cmhi.chinamobile.com"'
+  $host_regex = undef
+  $time_length = undef
+  $time_granularity = undef
+  $alarm_relation = undef
+  $alarm_conditions = {}
 }
 
 # vim: ft=puppet

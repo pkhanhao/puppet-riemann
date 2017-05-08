@@ -1,0 +1,47 @@
+; BEGIN CMCC ALARM RULE
+
+<% if @host_regex -%>
+  (where host #"<%= @host_regex %>"
+<% end -%>
+    (by :host
+<% if @time_length -%>
+      (moving-time-window <%= @time_length %>
+<% end -%>
+<% if @alarm_conditions -%>
+  <% if @alarm_relation -%>
+        (where (<%= @alarm_relation %>
+  <% else -%>
+        (where
+  <% end -%>
+  <% @alarm_conditions.each_value do |value| -%>
+     <% if value["indicators"].size == 2 -%>
+           (and (service "<%= value["name"] %>")(<%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %>))
+     <% else -%>
+           (and (service "<%= value["name"] %>")(<%= value["operation"] %> metric <%= value["indicators"] %>))
+     <% end -%>
+  <% end -%>
+  <% if @alarm_relation -%>
+         )
+  <% end -%>
+<% end -%>
+<% if @time_granularity -%>
+          (rollup 1 <%= @time_granularity %>
+<% end -%>
+<% if @mail_to -%>
+            ((mailer {:from <%= @mail_from %>}) <%= @mail_to %>)
+<% end -%>
+<% if @time_granularity -%>
+          )
+<% end -%>
+<% if @alarm_conditions -%>
+         )
+<% end -%>
+<% if @time_length -%>
+      )
+<% end -%>
+    )
+<% if @host_regex -%>
+  )
+<% end -%>
+
+; END CMCC ALARM RULE

@@ -226,4 +226,35 @@ classes:
         content: db
       03-log-expired-events:
         content: (expired (fn [event] (info "expired" event)))
+    config_cmccstream:
+      01:
+        mail_to: '"pkhanhao@163.om"'
+        time_granularity: 30
+        alarm_conditions:
+          00-conditions:
+            name: cpu
+            operation: ">="
+            indicators: 60
+      02:
+        host_regex: "^pre7"
+        mail_from: '"riemann@example.com"'
+        mail_to: '"pkhanhao@163.om" "pkhanhao@example.com"'
+        time_length: 60
+        time_granularity: 60
+        alarm_relation: or
+        alarm_conditions:
+          00-conditions:
+            name: cpu
+            operation: ">="
+            indicators: 60
+          01-conditions:
+            name: load
+            operation: ">"
+            indicators: 9
+          02-conditions:
+            name: disk /
+            operation: "<="
+            indicators:
+            - 60
+            - 80
 ```
