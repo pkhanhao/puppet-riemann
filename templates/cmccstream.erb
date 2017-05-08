@@ -1,7 +1,7 @@
 ; BEGIN CMCC ALARM RULE
 
 <% if @host_regex -%>
-  (where host #"<%= @host_regex %>"
+  (where (host #"<%= @host_regex %>")
 <% end -%>
     (by :host
 <% if @time_length -%>
