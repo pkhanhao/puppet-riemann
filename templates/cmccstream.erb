@@ -2,7 +2,7 @@
 
 (where (not (state "expired"))
 <% if @host_regex -%>
-  (where (host #"^cdn-kvm-pre7")
+  (where (host #"<%= @host_regex %>")
 <% end -%>
     (by :host
 <% if @alarm_conditions -%>
