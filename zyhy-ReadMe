@@ -241,7 +241,7 @@ classes:
         mail_to: '"pkhanhao@163.om" "pkhanhao@example.com"'
         time_length: 60
         time_granularity: 60
-        alarm_relation: or
+        #alarm_relation: and
         alarm_conditions:
           00-conditions:
             name: cpu
