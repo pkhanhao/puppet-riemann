@@ -27,7 +27,7 @@
     <% if @time_granularity -%>
                    (throttle 1 <%= @time_granularity %>
     <% end -%>
-                     ((mailer {:from <% if @mail_from -%><%= @mail_from %><% end -%>}) <% if @mail_to -%><%= @mail_to %><% end -%>)
+                     ((mailer {:from <% if @mail_from -%>"<%= @mail_from %>"<% end -%>}) <% if @mail_to -%><% @mail_to.each do |m| -%>"<%= m %>" <% end -%><% end -%>)
     <% if @time_granularity -%>
                    )
     <% end -%>
