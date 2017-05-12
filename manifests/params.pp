@@ -43,7 +43,7 @@ class riemann::params {
   $init_config_hash = {}
   $log_file = '/var/log/riemann/riemann.log'
   $mail_from = "riemann@${::fqdn}"
-  $mail_to = ["hanhao@cmhi.chinamobile.com"]
+  $mail_to = "hanhao@cmhi.chinamobile.com"
   $host_regex = undef
   $time_length = undef
   $time_granularity = undef
