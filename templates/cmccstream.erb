@@ -11,10 +11,10 @@
     <% if @time_length -%>
         (fixed-time-window <%= @time_length %>
           (smap folds/minimum
-            (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"] %><% end -%>)
+            (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"][0] %><% end -%>)
               (adjust [:description str "\n or more in the last 10 seconds"]
     <% else -%>
-        (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"] %><% end -%>)
+        (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"][0] %><% end -%>)
     <% end -%>
     <% if @time_granularity -%>
                    (throttle 1 <%= @time_granularity %>
