@@ -10,17 +10,9 @@
       (where (service "<%= value["name"] %>")
     <% if @time_length -%>
         (fixed-time-window <%= @time_length %>
-          (smap (fn [events] (let [fraction (/ (count (filter #(<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> (:metric %) <%= value["indicators"][1] %><% else -%><%= value["operation"] %> (:metric %) <%= value["indicators"] %><% end -%>) events)) (count events))]
-                  (event {:service "<%= value["name"] %>"
-                          :host (:host events)
-                          :metric fraction
-                          ;:time (unix-time)
-                          :description (str fraction "(*100)%  <%= value["name"] %> metric <% if value["indicators"].size == 2 -%>in range <%= value["indicators"][0] %> ~ <%= value["indicators"][1] %><% else -%><%= value["operation"] %> <%= value["indicators"] %><% end -%> in the last <%= @time_length %> seconds")
-                           :state   (condp < fraction
-                                     0.9 "critical"
-                                     0.7 "warning"
-                                         "ok")})))
-                 (where (state "critical")
+          (smap folds/minimum
+            (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"] %><% end -%>)
+              (adjust [:description str "\n or more in the last 10 seconds"]
     <% else -%>
         (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"] %><% end -%>)
     <% end -%>
@@ -32,7 +24,7 @@
                    )
     <% end -%>
     <% if @time_length -%>
-        )))
+        ))))
     <% else -%>
         )
     <% end -%>
