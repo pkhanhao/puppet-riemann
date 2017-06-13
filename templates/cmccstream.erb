@@ -8,25 +8,26 @@
 <% if @alarm_conditions -%>
   <% @alarm_conditions.each_value do |value| -%>
       (where (service "<%= value["name"] %>")
-    <% if @time_length > "0" -%>
+    <% if @time_length and @time_length > "0" -%>
         (fixed-time-window <%= @time_length %>
           (smap folds/minimum
             (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"][0] %><% end -%>)
-              (adjust [:description str "\n or more in the last <%= @time_length %> seconds"]
+              (adjust [:description str "\n\n 告警阀值-指标<% if value["indicators"].size == 2 -%> <%= value["indicators"][0] %>到<%= value["indicators"][1] %>之间<% else -%> <%= value["operation"] %> <%= value["indicators"][0] %><% end -%> ，告警已持续 <%= @time_length %> 秒。"]
     <% else -%>
         (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"][0] %><% end -%>)
+              (adjust [:description str "\n\n 告警阀值-指标<% if value["indicators"].size == 2 -%> <%= value["indicators"][0] %>到<%= value["indicators"][1] %>之间<% else -%> <%= value["operation"] %> <%= value["indicators"][0] %><% end -%> ，告警为立即触发。"]
     <% end -%>
-    <% if @time_granularity > "0" -%>
+    <% if @time_granularity and @time_granularity > "0" -%>
                    (throttle 1 <%= @time_granularity %>
     <% end -%>
                      ((mailer {:from <% if @mail_from -%>"<%= @mail_from %>"<% end -%>}) <% if @mail_to -%>"<%= @mail_to %>"<% end -%>)
-    <% if @time_granularity > "0" -%>
+    <% if @time_granularity and @time_granularity > "0" -%>
                    )
     <% end -%>
-    <% if @time_length > "0" -%>
+    <% if @time_length and @time_length > "0" -%>
         ))))
     <% else -%>
-        )
+        ))
     <% end -%>
       )
   <% end -%>
