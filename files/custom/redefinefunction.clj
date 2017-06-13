@@ -40,6 +40,7 @@
                         "reqbackOkMin" "回源请求监控-回源成功数"
                         "back4CodeMin" "回源请求监控-回源客户端错误数"
                         "back5CodeMin" "回源请求监控-回源服务端错误数"
+                        (human-uniq (map :service events) "services")
                )
                ;(human-uniq (map :state events) "states")
               ]
@@ -93,6 +94,7 @@
                         "reqbackOkMin" "回源请求监控-回源成功数"
                         "back4CodeMin" "回源请求监控-回源客户端错误数"
                         "back5CodeMin" "回源请求监控-回源服务端错误数"
+                        (:service event)
                                   )"\n"
               "当前数值：\t"
               (if (ratio? (:metric event))
