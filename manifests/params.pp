@@ -42,7 +42,7 @@ class riemann::params {
   $config_include_dir = 'custom'
   $init_config_hash = {}
   $log_file = '/var/log/riemann/riemann.log'
-  $mail_from = "riemann@${::fqdn}"
+  $mail_from = "Riemann告警邮件<riemann@${::fqdn}>"
   $mail_to = "hanhao@cmhi.chinamobile.com"
   $host_regex = undef
   $time_length = undef
