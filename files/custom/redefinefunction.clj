@@ -100,8 +100,8 @@
               (if (ratio? (:metric event))
                 (double (:metric event))
                 (:metric event)) "\n"
-              "Tags: [" (join ", " (:tags event)) "]\n"
-              "Custom Attributes: " (custom-attributes event) "\n\n"
+              "标签列表：\t[" (join ", " (:tags event)) "]\n"
+              "特有属性：\t" (custom-attributes event) "\n\n"
               "详细描述：\t" (:description event)
             )
           )
