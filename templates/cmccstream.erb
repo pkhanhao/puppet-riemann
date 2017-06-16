@@ -10,7 +10,7 @@
       (where (service "<%= value["name"] %>")
     <% if @time_length and @time_length > "0" -%>
         (fixed-time-window <%= @time_length %>
-          (smap folds/minimum
+          (smap folds/mean
             (where (<% if value["indicators"].size == 2 -%><%= value["operation"] %> <%= value["indicators"][0] %> metric <%= value["indicators"][1] %><% else -%><%= value["operation"] %> metric <%= value["indicators"][0] %><% end -%>)
               (adjust [:description str "\n\n 告警阀值-指标<% if value["indicators"].size == 2 -%> <%= value["indicators"][0] %>到<%= value["indicators"][1] %>之间<% else -%> <%= value["operation"] %> <%= value["indicators"][0] %><% end -%> ，告警已持续 <%= @time_length %> 秒。"]
     <% else -%>
