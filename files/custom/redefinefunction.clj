@@ -1,5 +1,10 @@
 (ns riemann.common)
 
+(defn unix-to-iso8601-8timezone [unix]
+  (clj-time.format/unparse (clj-time.format/with-zone (clj-time.format/formatters :date-time-no-ms) (clj-time.core/time-zone-for-offset 8))
+                           (clj-time.coerce/from-long (long (* 1000 unix))))
+)
+
 (defn subject [events]
   (str (join " " (keep identity
               [(human-uniq (map :host events) "hosts")
