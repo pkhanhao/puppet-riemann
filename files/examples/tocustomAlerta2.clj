@@ -1,5 +1,7 @@
 (require 'customAlerta)
 
+(def alertapi "http://172.23.195.75:8011/v1/alarm")
+
 (defn severity
     [severity message & children]
         (fn [e] ((apply with {:state severity :description message} children) e))
@@ -8,14 +10,14 @@
 (def alarmstate (partial severity "1"))
 (def normalstate (partial severity "2"))
 
-(def alert-notice
-    ;hhAlerta/alerta
+(defn alert-notice [e]
+    (customAlerta/alerta e :override {:alert alertapi})
     #(info ">>>>>>>>>>>>>>>>>>>>>>>>> alert-log ##" (:service %) (:state %) (:metric %) (:description %))
 )
 
 (def changed-notice
     (changed-state {:init "2"}
-        ;hhAlerta/alerta
+        alert-notice
         #(info ">>>>>>>>>>>>>>>>>>>>>>>>> changed-log ##" (:service %) (:state %) (:metric %))
     )
    ; (changed-state {:init "2"}
@@ -36,7 +38,7 @@
                   (smap
                        (fn [events]
                          (let [fraction (/ (count (filter #(> (:metric %) 0.8) events)) (count events))]
-                           (event {:time (:time (first events))
+                           (event {:time (:time (last events))
                                    :host (:host (last events))
                                    :service (:service (last events))
                                    ;:metric (:metric (apply max-key :metric events))

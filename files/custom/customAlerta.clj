@@ -7,11 +7,7 @@
   )
 )
 
-(def hostname (.getHostName (java.net.InetAddress/getLocalHost)))
-
-(def alerta-endpoints
-        {:alert "http://127.0.0.1:8080/v1/alarm"
-        :heartbeat "http://127.0.0.1:8080/heartbeat"})
+;(def hostname (.getHostName (java.net.InetAddress/getLocalHost)))
 
 (defn post-to-alerta
   "POST to the Alerta REST API."
@@ -54,17 +50,10 @@
 )
 
 (defn alerta
-  "Creates an alerta adapter. (changed-state (alerta))"
-  [e]
-  (post-to-alerta
-        (:alert alerta-endpoints)
-        (format-alerta-event e))
-)
-
-(defn heartbeat
-  [e]
-  (post-to-alerta
-        (:heartbeat alerta-endpoints)
-        {:origin (str "riemann/" hostname)
-         :type "Heartbeat"})
+  "Creates an alerta adapter."
+  [e & {:keys [override]}]
+  (let [override (merge {:alert "http://localhost:8080/alert"} override)]
+    (post-to-alerta
+        (:alert override)
+        (format-alerta-event e)))
 )
