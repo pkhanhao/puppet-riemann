@@ -13,6 +13,7 @@
                         "memory" "health-内存"
                         "disk /" "health-根磁盘"
                         "load" "health-负载"
+                        "cdn.sys.processes.ps_count" "进程数"
                         "cdn.sys.load.1m" "主机监控-主机负载"
                         "cdn.sys.tcpconns.tcp_connections.established" "主机监控-并发连接数"
                         "cdn.sys.cpu.user" "CPU监控-单核最高利用率"
@@ -141,13 +142,14 @@
         (map
           (fn [event]
             (str
-              "告警时间：\t" (time-at (:time event)) "\n"
+              "告警时间：\t" (unix-to-iso8601-8timezone (:time event)) "\n"
               "主机名称：\t" (:host event) "\n"
               "告警指标：\t" (case (:service event)
                         "cpu" "health-CPU"
                         "memory" "health-内存"
                         "disk /" "health-根磁盘"
                         "load" "health-负载"
+                        "cdn.sys.processes.ps_count" "进程数"
                         "cdn.sys.load.1m" "主机监控-主机负载"
                         "cdn.sys.tcpconns.tcp_connections.established" "主机监控-并发连接数"
                         "cdn.sys.cpu.user" "CPU监控-单核最高利用率"
