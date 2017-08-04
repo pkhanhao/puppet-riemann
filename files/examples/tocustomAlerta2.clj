@@ -30,6 +30,7 @@
 (streams
   (where (not (state "expired"))
     (by :host
+;;;
         (match :service "cpu"
            (with :state "nil"
                 #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Hello Event ##" (:service %) (:state %) (:metric %))
@@ -37,7 +38,7 @@
                   ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
                   (smap
                        (fn [events]
-                         (let [fraction (/ (count (filter #(> (:metric %) 0.8) events)) (count events))]
+                         (let [fraction (/ (count (filter #(> (* (:metric %) 100) 80) events)) (count events))]
                            (event {:time (:time (last events))
                                    :host (:host (last events))
                                    :service (:service (last events))
@@ -63,6 +64,42 @@
                )
             )
         )
+;;;
+;;;
+        (where (and (service "cdn.sys.df.percent_bytes.used") (= (:device event) "root"))
+           (with :state "nil"
+                #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Hello Event ##" (:service %) (:state %) (:metric %))
+               (fixed-time-window 60
+                  ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
+                  (smap
+                       (fn [events]
+                         (let [fraction (/ (count (filter #(> (:metric %) 85) events)) (count events))]
+                           (event {:time (:time (last events))
+                                   :host (:host (last events))
+                                   :service (str (:service (last events)) "系统盘")
+                                   ;:metric (:metric (apply max-key :metric events))
+                                   :metric (:metric (last events))
+                                   :description (:description (last events))
+                                   :state   (condp < fraction
+                                             0.99 "alarm"
+                                                  "normal")})
+                         )
+                       )
+                       #(info ">>>>>>>>>>>>>>>>>>>>>>>>> New-log ##" (:service %) (:state %) (:metric %))
+                       ; for state change
+                       (splitp = state
+                         "alarm" (alarmstate "Root device utilisation > 85%" changed-notice)
+                         "normal" (normalstate "Root device utilisation is OK" changed-notice)
+                       )
+                       ; for alert
+                       (where (state "alarm")
+                         (alarmstate "Root device utilisation > 85%" alert-notice)
+                       )
+                  )
+               )
+            )
+        )
+;;;
     )
   )
 )
