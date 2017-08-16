@@ -12,11 +12,11 @@
 
 (defn alert-notice [e]
     (customAlerta/alerta e :override {:alert alertapi})
-    #(info ">>>>>>>>>>>>>>>>>>>>>>>>> alert-log ##" (:service %) (:state %) (:metric %) (:description %))
+    ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> alert-log ##" (:service %) (:state %) (:metric %) (:description %))
 )
 
 (def changed-notice
-    (changed-state {:init "2"}
+    (changed-state
         alert-notice
         #(info ">>>>>>>>>>>>>>>>>>>>>>>>> changed-log ##" (:service %) (:state %) (:metric %))
     )

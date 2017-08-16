@@ -12,11 +12,11 @@
 
 (defn alert-notice [e]
     (customAlerta/alerta e :override {:alert alertapi})
-    #(info ">>>>>>>>>>>>>>>>>>>>>>>>> alert-log ##" (:service %) (:state %) (:metric %) (:description %))
+    ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> alert-log ##" (:service %) (:state %) (:metric %) (:description %))
 )
 
 (def changed-notice
-    (changed-state {:init "2"}
+    (changed-state
         alert-notice
         #(info ">>>>>>>>>>>>>>>>>>>>>>>>> changed-log ##" (:service %) (:state %) (:metric %))
     )
@@ -35,7 +35,7 @@
            (with :state "nil"
                 #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Hello Event ##" (:service %) (:state %) (:metric %))
                (fixed-time-window 60
-                  ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
+                  #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
                   (smap
                        (fn [events]
                          (let [fraction (/ (count (filter #(> (* (:metric %) 100) 80) events)) (count events))]
@@ -70,7 +70,7 @@
            (with :state "nil"
                 #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Hello Event ##" (:service %) (:state %) (:metric %))
                (fixed-time-window 60
-                  ;#(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
+                  #(info ">>>>>>>>>>>>>>>>>>>>>>>>> Fixed-time-log ##" %)
                   (smap
                        (fn [events]
                          (let [fraction (/ (count (filter #(> (:metric %) 85) events)) (count events))]
