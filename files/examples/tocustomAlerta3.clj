@@ -373,6 +373,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;
         (match :service "cdn.sys.df.percent_bytes.used"
+         (where (or (= (:device event) "boot") (= (:device event) "boot-efi"))
           (by :device
             (with :state "nil"
                 (fixed-time-window 300
@@ -381,7 +382,7 @@
                          (let [fraction (/ (count (filter #(> (:metric %) 80) events)) (count events))]
                            (event {:time (:time (last events))
                                    :host (:host (last events))
-                                   :service (:service (last events))
+                                   :service (str (:service (last events)) "启动盘")
                                    ;:service (str (:service (last events)) (:device (last events)))
                                    :metric (:metric (last events))
                                    :description (:description (last events))
@@ -390,17 +391,18 @@
                                                   "normal")})
                          )
                        )
-                       ;(splitp = state
-                       ;  "alarm" (alarmstate "硬盘剩余空间不足20%" changed-notice)
-                       ;  "normal" (normalstate "硬盘剩余空间不足20%(告警清除)" changed-notice)
-                       ;)
-                       ;(where (state "alarm")
-                       ;  (alarmstate "硬盘剩余空间不足20%" alert-notice)
-                       ;)
+                       (splitp = state
+                         "alarm" (alarmstate "启动盘剩余空间不足20%" changed-notice)
+                         "normal" (normalstate "启动盘剩余空间不足20%(告警清除)" changed-notice)
+                       )
+                       (where (state "alarm")
+                         (alarmstate "启动盘剩余空间不足20%" alert-notice)
+                       )
                   )
                 )
             )
           )
+         )
         )
 ;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;

@@ -44,7 +44,7 @@
              "cdn.sys.df.percent_bytes.used系统盘" "10003"
              "cdn.sys.disk.disk_ops.read" "10004"
              "cdn.sys.disk.disk_ops.write" "10005"
-             "cdn.sys.df.percent_bytes.used" "10006"
+             "cdn.sys.df.percent_bytes.used启动盘" "10006"
              "cdn.ping.ping_droprate.117.131.213.238" "10007"
              (:service event)
             )
