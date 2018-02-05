@@ -32,20 +32,20 @@
    :alarmOccurTime (riemann.common/unix-to-iso8601-8timezone (:time event))
    :hostName (:host event)
    :ruleNum (case (:service event)
-             "warnFlowinRateMin大于阀值" "00001"
-             "warnFlowinRateMin小于阀值" "00002"
-             "warnFlowoutRateMin大于阀值" "00003"
-             "warnFlowoutRateMin小于阀值" "00004"
-             "cdn.sys.tcpconns.tcp_connections.established" "00005"
-             "warnReqErrorRatio" "00006"
-             "cdn.sys.if.if_octets.tx" "00007"
-             "cdn.sys.cpuall.user" "10001"
-             "cdn.sys.memory.percent.used" "10002"
-             "cdn.sys.df.percent_bytes.used系统盘" "10003"
-             "cdn.sys.disk.disk_ops.read" "10004"
-             "cdn.sys.disk.disk_ops.write" "10005"
-             "cdn.sys.df.percent_bytes.used启动盘" "10006"
-             "cdn.ping.ping_droprate.117.131.213.238" "10007"
+             "warnFlowinRateMin大于阀值" "000001"
+             "warnFlowinRateMin小于阀值" "000002"
+             "warnFlowoutRateMin大于阀值" "000003"
+             "warnFlowoutRateMin小于阀值" "000004"
+             "cdn.sys.tcpconns.tcp_connections.established" "000005"
+             "warnReqErrorRatio" "000006"
+             "cdn.sys.if.if_octets.tx" "000007"
+             "cdn.sys.cpuall.user" "100001"
+             "cdn.sys.memory.percent.used" "100002"
+             "cdn.sys.df.percent_bytes.used系统盘" "100003"
+             "cdn.sys.disk.disk_ops.read" "100004"
+             "cdn.sys.disk.disk_ops.write" "100005"
+             "cdn.sys.df.percent_bytes.used启动盘" "100006"
+             "cdn.ping.ping_droprate.117.131.213.238" "100007"
              (:service event)
             )
    :currentValue
